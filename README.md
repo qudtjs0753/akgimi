@@ -91,7 +91,7 @@
 | [이승민](https://github.com/esm712)      | 백엔드     | 계좌, 유저, 물건조회                    | 팀장            |
 | [강병선](https://github.com/qudtjs0753)  | 백엔드     | 피드,영수증,리뷰(뷰 기능), 테스트환경 구성       | 백엔드 리더          |
 | [조성찬](https://github.com/JoeSeongchan) | 백엔드     | 인증, 인프라                         | 인프라 리더    |
+| [장윤아](https://github.com/zogak)       | 백엔드 | 챌린지                             |                 |
 | [김 솔](https://github.com/s01k1m)      | 프론트엔드 | 간편비밀번호(무작위 배열), 유저 인증, 유저 관련 기능 |           |
 | [고서영](https://github.com/seoyoung81)  | 프론트엔드 | 피드, 영수증, 챌린지                    | 프론트엔드 리더 |
-| [장윤아](https://github.com/zogak)       | 프론트엔드 | 챌린지                             |                 |
 
