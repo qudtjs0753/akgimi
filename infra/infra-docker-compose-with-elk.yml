@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   mysql:
@@ -58,21 +58,21 @@ services:
       - inner
     environment:
       - TZ=Asia/Seoul
-  opensearch-node:
+  opensearch-node1:
     restart: always
     build:
       context: ./opensearch
-    container_name: opensearch-node
+    container_name: opensearch-node1
     environment:
       cluster.name: opensearch-cluster
-      node.name: opensearch-node
-      discovery.seed_hosts: opensearch-node
+      node.name: opensearch-node1
+      discovery.seed_hosts: opensearch-node1, opensearch-node2
       # cluster.initial_master_nodes: opensearch-node
+      cluster.initial_cluster_manager_nodes: opensearch-node1,opensearch-node2
       bootstrap.memory_lock: "true" # along with the memlock settings below, disables swapping
       OPENSEARCH_JAVA_OPTS: "-Xms1g -Xmx1g"
       DISABLE_INSTALL_DEMO_CONFIG: "true"
       DISABLE_SECURITY_PLUGIN: "true"
-      discovery.type: single-node
     ulimits:
       memlock:
         soft: -1
@@ -81,11 +81,37 @@ services:
         soft: 65536 # maximum number of open files for the OpenSearch user, set to at least 65536 on modern systems
         hard: 65536
     volumes:
-      - opensearch-data:/usr/share/opensearch/data
+      - opensearch-data1:/usr/share/opensearch/data
       # - ./opensearch/opensearch-node1/config/opensearch.yml:/usr/share/opensearch/config/opensearch.yml:ro,Z
     ports:
       - 9200:9200
       - 9600:9600 # required for Performance Analyzer
+    networks:
+      - inner
+  opensearch-node2:
+    restart: always
+    build:
+      context: ./opensearch
+    container_name: opensearch-node2
+    environment:
+      cluster.name: opensearch-cluster
+      node.name: opensearch-node2
+      discovery.seed_hosts: opensearch-node1, opensearch-node2
+      cluster.initial_cluster_manager_nodes: opensearch-node1,opensearch-node2
+      bootstrap.memory_lock: "true" # along with the memlock settings below, disables swapping
+      OPENSEARCH_JAVA_OPTS: "-Xms1g -Xmx1g"
+      DISABLE_INSTALL_DEMO_CONFIG: "true"
+      DISABLE_SECURITY_PLUGIN: "true"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536 # maximum number of open files for the OpenSearch user, set to at least 65536 on modern systems
+        hard: 65536
+    volumes:
+      - opensearch-data2:/usr/share/opensearch/data
+      # - ./opensearch/opensearch-node1/config/opensearch.yml:/usr/share/opensearch/config/opensearch.yml:ro,Z
     networks:
       - inner
   opensearch-dashboards:
@@ -100,13 +126,11 @@ services:
     environment:
       DISABLE_SECURITY_DASHBOARDS_PLUGIN: "true"
       DISABLE_INSTALL_DEMO_CONFIG: "true"
-      OPENSEARCH_HOSTS: '["http://opensearch-node:9200"]'
+      OPENSEARCH_HOSTS: '["http://opensearch-node1:9200","http://opensearch-node2:9200"]'
     # volumes:
     #   - ./opensearch-dashboards/config/opensearch_dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml:ro,Z
     networks:
       - inner
-    depends_on:
-      - opensearch-node
   logstash:
     build:
       context: logstash/
@@ -121,8 +145,6 @@ services:
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
     networks:
       - inner
-    depends_on:
-      - opensearch-node
   filebeat:
     build:
       context: filebeat/
@@ -139,7 +161,7 @@ services:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
       KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
-    networks: 
+    networks:
       - inner
     depends_on:
       - logstash
@@ -173,7 +195,7 @@ services:
       TZ: Asia/Seoul
 networks:
   inner:
-     external: true
+    external: true
 
 volumes:
   mysql-data:
@@ -188,7 +210,9 @@ volumes:
     external: true
   redis-conf:
     external: true
-  opensearch-data:
+  opensearch-data1:
+  opensearch-data2:
+  # opensearch-data3:
   application:
   filebeat:
   nginx:

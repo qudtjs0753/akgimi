@@ -1,5 +1,5 @@
 filebeat.inputs:
-- type: filestream
+- type: log
   enabled: true
   paths:
     - /usr/share/application/logs/error/*.log
@@ -31,7 +31,7 @@ filebeat.inputs:
   #clean_removed : 디스크에서 찾을 수 없는 파일의 정보를 registry에서 삭제.
   clean_removed: true
 
-- type: filestream
+- type: log
   enabled: true
   paths:
     - /usr/share/nginx/application/access/*.log
