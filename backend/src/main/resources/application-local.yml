@@ -77,3 +77,7 @@ notification:
 
 logging:
   config: classpath:log4j2-local.xml
+
+management:
+  security:
+    enabled: false
