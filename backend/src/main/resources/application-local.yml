@@ -79,5 +79,10 @@ logging:
   config: classpath:log4j2-local.xml
 
 management:
-  security:
-    enabled: false
+  endpoint:
+    metrics:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: metrics
